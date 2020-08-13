@@ -1,0 +1,1 @@
+Get-NetIPConfiguration | Foreach IPv4DefaultGateway | Select NextHop

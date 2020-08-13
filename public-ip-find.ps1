@@ -1,0 +1,1 @@
+(New-Object System.Net.WebClient).DownloadString("http://myexternalip.com/raw")
