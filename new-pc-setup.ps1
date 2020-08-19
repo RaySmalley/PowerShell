@@ -52,7 +52,7 @@ Start-Sleep 10
 # Remove Office trials if installed
 if (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where { $_.DisplayName -match "es-es" }){
     Write-Host "Removing Office trial..."`n
-    Start-Process -FilePath "$PSScriptRoot\ODT64\setup.exe" -ArgumentList /configure,"$PSScriptRoot\ODT64\remove-office.xml" -WindowStyle Hidden -Wait
+    Start-Process -FilePath "$PSScriptRoot\Office365\setup.exe" -ArgumentList /configure,"$PSScriptRoot\Office365\remove-office.xml" -WindowStyle Hidden -Wait
     Write-Host "Office trial removal complete."`n
     Restart-Computer
 }
@@ -61,7 +61,7 @@ if (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\
 if (-not (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where { $_.DisplayName -match "es-es" })) {
     if (-not (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where { $_.DisplayName -match "Office 365" })) {
         Write-Host "Installing Office 365..."`n
-        Start-Process -FilePath "$PSScriptRoot\ODT64\setup.exe" -ArgumentList /configure,"$PSScriptRoot\ODT64\configuration-Office365-x64-Biz.xml" -WindowStyle Hidden -Wait
+        Start-Process -FilePath "$PSScriptRoot\Office365\setup.exe" -ArgumentList /configure,"$PSScriptRoot\Office365\Office365BusinessRetail64.xml" -WindowStyle Hidden -Wait
         Write-Host "Office 365 installation complete."`n
     }
 }
