@@ -53,8 +53,18 @@ Start-Sleep 10
 if (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where { $_.DisplayName -match "es-es" }){
     Write-Host "Removing Office trial..."`n
     Start-Process -FilePath "$PSScriptRoot\Office365\setup.exe" -ArgumentList /configure,"$PSScriptRoot\Office365\remove-office.xml" -WindowStyle Hidden -Wait
-    Write-Host "Office trial removal complete."`n
-    Restart-Computer
+    if (-Not (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where { $_.DisplayName -match "es-es" })) {
+        Write-Host "Office trial removal complete. Restarting computer..."`n
+        Start-Sleep 5
+        Restart-Computer
+    } else {
+        For ($i=1; $i -le 18; $i++) {(New-Object -ComObject WScript.Shell).SendKeys([char]174)}
+        [console]::Beep();[console]::Beep()
+        Start-Sleep 3
+        For ($i=1; $i -le 18; $i++) {(New-Object -ComObject WScript.Shell).SendKeys([char]175)}
+        Write-Host "Office trial removal failed."`n -ForegroundColor Red
+        Read-Host -Prompt "Please uninstall Office trial manually and restart script."
+        Exit 10
 }
 
 # Install Office 365
