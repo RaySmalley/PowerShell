@@ -1,5 +1,6 @@
 ﻿# Download latest version of script
 Invoke-WebRequest https://raw.githubusercontent.com/RaySmalley/PowerShell/master/new-pc-setup.ps1 -OutFile $MyInvocation.MyCommand.Path
+Start-Sleep 3
 
 # Test for elevation
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
