@@ -65,9 +65,29 @@ if (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\
         Write-Host "Office trial removal failed."`n -ForegroundColor Red
         Read-Host -Prompt "Please uninstall Office trial manually and restart script."
         Exit 10
+    }
 }
 
 # Install Office 365
+$ODTXML = @"
+<Configuration>
+
+  <Add SourcePath="$PSScriptRoot\Office365\Office365BusinessRetail64" OfficeClientEdition="64">
+    <Product ID="O365BusinessRetail">
+      <Language ID="en-us" />
+    </Product>
+  </Add>
+
+  <!--  <Display Level="Full" AcceptEULA="TRUE" />  -->
+
+</Configuration>
+"@
+$ODTXML > "$PSScriptRoot\Office365\Office365BusinessRetail64.xml"
+if (-Not (Test-Path "$PSScriptRoot\Office365\Office365BusinessRetail64")) {
+    Write-Host "Downloading Office 365..."`n
+    Start-Process -FilePath "$PSScriptRoot\Office365\setup.exe" -ArgumentList /download,"$PSScriptRoot\Office365\Office365BusinessRetail64.xml" -WindowStyle Hidden -Wait
+    Write-Host "Office 365 download complete."`n
+}
 if (-not (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where { $_.DisplayName -match "es-es" })) {
     if (-not (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where { $_.DisplayName -match "Office 365" })) {
         Write-Host "Installing Office 365..."`n
@@ -119,7 +139,7 @@ if (-not (Get-LocalUser 415Admin -ErrorAction SilentlyContinue)) {
 if ($env:USERNAME -ne "415Admin") {
 
 # Set default apps
-$XML = @'
+$DefaultAppXML = @'
 <?xml version="1.0" encoding="UTF-8"?>
 <DefaultAssociations>
   <Association Identifier=".3g2" ProgId="AppX6eg8h5sxqq90pv53845wmnbewywdqq5h" ApplicationName="Movies &amp; TV" />
@@ -223,7 +243,7 @@ $XML = @'
   <Association Identifier="mswindowsvideo" ProgId="AppX6w6n4f8xch1s3vzwf3af6bfe88qhxbza" ApplicationName="Movies &amp; TV" />
 </DefaultAssociations>
 '@
-$XML > $env:TEMP\appdefaults.xml
+$DefaultAppXML > $env:TEMP\appdefaults.xml
 Start-Process -FilePath "dism.exe" -ArgumentList "/Online, /Import-DefaultAppAssociations:$env:TEMP\appdefaults.xml"
 
 # Open Windows to set default apps and install agents
