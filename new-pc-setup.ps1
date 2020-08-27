@@ -11,7 +11,6 @@ if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 Write-Host '# PC Setup Script           #'
 Write-Host '# Ray Smalley               #'
 Write-Host '# 2020                      #'`n
-Write-Host 'Hi Trent!'
 
 # Disable UAC
 New-ItemProperty -Path HKLM:Software\Microsoft\Windows\CurrentVersion\policies\system -Name EnableLUA -PropertyType DWord -Value 0 -Force | Out-Null
