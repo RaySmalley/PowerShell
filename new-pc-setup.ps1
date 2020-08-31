@@ -56,10 +56,43 @@ if (Get-WindowsUpdate -AcceptAll -Install -AutoReboot) {
 
 Start-Sleep 10
 
+# Download Office Deployment Toolkit
+function Get-ODTUri {
+    [CmdletBinding()]
+    [OutputType([string])]
+    param ()
+    $URL = "https://www.microsoft.com/en-us/download/confirmation.aspx?id=49117"
+    try {
+        $response = Invoke-WebRequest -UseBasicParsing -Uri $URL -ErrorAction SilentlyContinue
+    }
+    catch {
+        Throw "Failed to connect to ODT: $URL with error $_."
+        Break
+    }
+    finally {
+        $ODTUri = $response.links | Where-Object {$_.outerHTML -like "*click here to download manually*"}
+        Write-Output $ODTUri.href
+    }
+}
+if (-Not (Test-Path $PSScriptRoot\install\Office365)) {New-Item -ItemType Directory -Force -Path $PSScriptRoot\install\Office365 | Out-Null}
+$ODTURL = $(Get-ODTUri)
+Write-Host "Downloading latest version of Office 365 Deployment Tool (ODT)."`n
+Invoke-WebRequest -UseBasicParsing -Uri $ODTURL -OutFile $env:TEMP\ODT.exe
+Start-Process -FilePath "$env:TEMP\ODT.exe" -ArgumentList /quiet,/extract:$PSScriptRoot\install\Office365\ -Wait
+Remove-Item "$env:TEMP\ODT.exe" -Force
+
 # Remove Office trials if installed
+$OfficeRemovalXML = @"
+<Configuration>
+  <Display Level="None" AcceptEULA="True" />
+  <Remove All="TRUE" />
+</Configuration>
+"@
+$OfficeRemovalXML > "$PSScriptRoot\install\Office365\RemoveOffice.xml"
+
 if (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where { $_.DisplayName -match "es-es" }){
     Write-Host "Removing Office trial..."`n
-    Start-Process -FilePath "$PSScriptRoot\Office365\setup.exe" -ArgumentList /configure,"$PSScriptRoot\Office365\remove-office.xml" -WindowStyle Hidden -Wait
+    Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /configure,"$PSScriptRoot\install\Office365\RemoveOffice.xml" -WindowStyle Hidden -Wait
     if (-Not (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where { $_.DisplayName -match "es-es" })) {
         Write-Host "Office trial removal complete. Restarting computer..."`n
         Start-Sleep 5
@@ -78,27 +111,25 @@ if (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\
 # Install Office 365
 $ODTXML = @"
 <Configuration>
-
-  <Add SourcePath="$PSScriptRoot\Office365\Office365BusinessRetail64" OfficeClientEdition="64">
+  <Add SourcePath="$PSScriptRoot\install\Office365\Office365BusinessRetail64" OfficeClientEdition="64">
     <Product ID="O365BusinessRetail">
       <Language ID="en-us" />
     </Product>
   </Add>
-
   <!--  <Display Level="Full" AcceptEULA="TRUE" />  -->
-
 </Configuration>
 "@
-$ODTXML > "$PSScriptRoot\Office365\Office365BusinessRetail64.xml"
-if (-Not (Test-Path "$PSScriptRoot\Office365\Office365BusinessRetail64")) {
+$ODTXML > "$PSScriptRoot\install\Office365\Office365BusinessRetail64.xml"
+
+if (-Not (Test-Path "$PSScriptRoot\install\Office365\Office365BusinessRetail64")) {
     Write-Host "Downloading Office 365..."`n
-    Start-Process -FilePath "$PSScriptRoot\Office365\setup.exe" -ArgumentList /download,"$PSScriptRoot\Office365\Office365BusinessRetail64.xml" -WindowStyle Hidden -Wait
+    Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /download,"$PSScriptRoot\install\Office365\Office365BusinessRetail64.xml" -WindowStyle Hidden -Wait
     Write-Host "Office 365 download complete."`n
 }
 if (-not (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where { $_.DisplayName -match "es-es" })) {
     if (-not (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where { $_.DisplayName -match "Office 365" })) {
         Write-Host "Installing Office 365..."`n
-        Start-Process -FilePath "$PSScriptRoot\Office365\setup.exe" -ArgumentList /configure,"$PSScriptRoot\Office365\Office365BusinessRetail64.xml" -WindowStyle Hidden -Wait
+        Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /configure,"$PSScriptRoot\install\Office365\Office365BusinessRetail64.xml" -WindowStyle Hidden -Wait
         Write-Host "Office 365 installation complete."`n
     }
 }
@@ -255,7 +286,7 @@ Start-Process -FilePath "dism.exe" -ArgumentList "/Online, /Import-DefaultAppAss
 
 # Open Windows to set default apps and install agents
 Start-Process ms-settings:defaultapps
-Start-Process $PSScriptRoot\Tools
+Start-Process $PSScriptRoot\installTools
 New-Item -Path $env:TEMP -Name test.pdf -Force
 (((New-Object -com Shell.Application).NameSpace("$env:TEMP")).ParseName("test.pdf")).InvokeVerb("Properties")
 }
