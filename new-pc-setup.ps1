@@ -16,7 +16,7 @@ Write-Host '# 2020                      #'`n
 New-ItemProperty -Path HKLM:Software\Microsoft\Windows\CurrentVersion\policies\system -Name EnableLUA -PropertyType DWord -Value 0 -Force | Out-Null
 
 # Remove 415Admin password if present
-if (Get-LocalUser 415Admin -ErrorAction SilentlyContinue) {net user 415Admin ""}
+if (Get-LocalUser 415Admin -ErrorAction SilentlyContinue) {Set-LocalUser -name "415Admin" -Password ([securestring]::new())}
 
 # Allow script to run after reboot
 $StartupScript = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\pc-setup-autostart.bat"
