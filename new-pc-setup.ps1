@@ -15,6 +15,9 @@ Write-Host '# 2020                      #'`n
 # Disable UAC
 New-ItemProperty -Path HKLM:Software\Microsoft\Windows\CurrentVersion\policies\system -Name EnableLUA -PropertyType DWord -Value 0 -Force | Out-Null
 
+# Remove 415Admin password if present
+if (Get-LocalUser 415Admin -ErrorAction SilentlyContinue) {net user 415Admin ""}
+
 # Allow script to run after reboot
 $StartupScript = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\pc-setup-autostart.bat"
 New-Item $StartupScript -Force | Out-Null
@@ -68,7 +71,7 @@ if (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\
         For ($i=1; $i -le 18; $i++) {(New-Object -ComObject WScript.Shell).SendKeys([char]175)}
         Write-Host "Office trial removal failed."`n -ForegroundColor Red
         Read-Host -Prompt "Please uninstall Office trial manually and restart script."
-        Exit 10
+        Exit 2
     }
 }
 
