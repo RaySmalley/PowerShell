@@ -87,6 +87,7 @@ Write-Host "Downloading latest version of Office 365 Deployment Tool (ODT)."`n
 Invoke-WebRequest -UseBasicParsing -Uri $ODTURL -OutFile $env:TEMP\ODT.exe
 Start-Process -FilePath "$env:TEMP\ODT.exe" -ArgumentList /quiet,/extract:$PSScriptRoot\install\Office365\ -Wait
 Remove-Item "$env:TEMP\ODT.exe" -Force
+Remove-Item $PSScriptRoot\install\Office365\configuration* -Force -ErrorAction SilentlyContinue
 
 # Remove Office trials if installed
 $OfficeRemovalXML = @"
@@ -128,7 +129,7 @@ $ODTXML = @"
 "@
 $ODTXML > "$PSScriptRoot\install\Office365\Office365BusinessRetail64.xml"
 
-if (-Not (Test-Path "$PSScriptRoot\install\Office365\Office365BusinessRetail64")) {
+if (-Not (Test-Path "$PSScriptRoot\install\Office365\Office365BusinessRetail64\Office\Data\*.cab")) {
     Write-Host "Downloading Office 365..."`n
     Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /download,"$PSScriptRoot\install\Office365\Office365BusinessRetail64.xml" -WindowStyle Hidden -Wait
     Write-Host "Office 365 download complete."`n
