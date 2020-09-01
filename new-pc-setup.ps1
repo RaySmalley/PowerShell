@@ -16,7 +16,7 @@ Write-Host '# Ray Smalley               #'
 Write-Host '# 2020                      #'`n
 
 # Download and extract Windows 10 Configuration Designer setup files
-Invoke-WebRequest https://raw.githubusercontent.com/RaySmalley/PowerShell/master/new-pc-setup.ps1 -OutFile $env:TEMP\new-pc-setup.zip
+Invoke-WebRequest https://raw.githubusercontent.com/RaySmalley/PowerShell/master/new-pc-setup.zip -OutFile $env:TEMP\new-pc-setup.zip
 Expand-Archive -Path $env:TEMP\new-pc-setup.zip -DestinationPath $PSScriptRoot -Force
 <#
 # Disable UAC
