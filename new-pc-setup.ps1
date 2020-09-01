@@ -1,7 +1,9 @@
 ﻿# Download latest version of script
 $OldScript = $MyInvocation.MyCommand.Path
 $NewScript = -join ($PSScriptRoot.Substring(0,3), $MyInvocation.MyCommand)
+$ProgressPreference = 'SilentlyContinue'
 Invoke-WebRequest https://raw.githubusercontent.com/RaySmalley/PowerShell/master/new-pc-setup.ps1 -OutFile $NewScript
+if ($OldScript -ne $NewScript) {Remove-Item $OldScript -Force}
 
 # Test for elevation
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
@@ -13,10 +15,7 @@ Write-Host '# PC Setup Script           #'
 Write-Host '# Ray Smalley               #'
 Write-Host '# 2020                      #'`n
 
-# Delete old script
-if ($OldScript -ne $NewScript) {Remove-Item $OldScript -Force}
-
-Read-Host "Press Enter"
+Read-Host "This is new script. Press Enter"
 <#
 # Disable UAC
 New-ItemProperty -Path HKLM:Software\Microsoft\Windows\CurrentVersion\policies\system -Name EnableLUA -PropertyType DWord -Value 0 -Force | Out-Null
