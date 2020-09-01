@@ -18,7 +18,7 @@ Write-Host '# 2020                      #'`n
 # Download and extract Windows 10 Configuration Designer setup files
 Invoke-WebRequest https://raw.githubusercontent.com/RaySmalley/PowerShell/master/new-pc-setup.ps1 -OutFile $env:TEMP\new-pc-setup.zip
 Expand-Archive -Path $env:TEMP\new-pc-setup.zip -DestinationPath $PSScriptRoot -Force
-
+<#
 # Disable UAC
 New-ItemProperty -Path HKLM:Software\Microsoft\Windows\CurrentVersion\policies\system -Name EnableLUA -PropertyType DWord -Value 0 -Force | Out-Null
 
@@ -310,3 +310,4 @@ Remove-Item "$env:TEMP\new-pc-setup.zip" -Force -ErrorAction SilentlyContinue
 
 # Re-enable UAC
 New-ItemProperty -Path HKLM:Software\Microsoft\Windows\CurrentVersion\policies\system -Name EnableLUA -PropertyType DWord -Value 1 -Force | Out-Null
+#>
