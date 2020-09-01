@@ -1,5 +1,7 @@
 ﻿# Download latest version of script
-Invoke-WebRequest https://raw.githubusercontent.com/RaySmalley/PowerShell/master/new-pc-setup.ps1 -OutFile $MyInvocation.MyCommand.Path
+$OldScript = $MyInvocation.MyCommand.Path
+$NewScript = -join ($PSScriptRoot.Substring(0,3), $MyInvocation.MyCommand)
+Invoke-WebRequest https://raw.githubusercontent.com/RaySmalley/PowerShell/master/new-pc-setup.ps1 -OutFile -join ($PSScriptRoot.Substring(0,3), $MyInvocation.MyCommand)
 Start-Sleep 3
 
 # Test for elevation
@@ -12,6 +14,9 @@ Write-Host '# PC Setup Script           #'
 Write-Host '# Ray Smalley               #'
 Write-Host '# 2020                      #'`n
 
+# Delete old script
+if ($OldScript -ne $NewScript) {Remove-Item $OldScript -Force}
+<#
 # Disable UAC
 New-ItemProperty -Path HKLM:Software\Microsoft\Windows\CurrentVersion\policies\system -Name EnableLUA -PropertyType DWord -Value 0 -Force | Out-Null
 
@@ -301,3 +306,4 @@ Remove-Item "$env:TEMP\appdefaults.xml" -Force -ErrorAction SilentlyContinue
 
 # Re-enable UAC
 New-ItemProperty -Path HKLM:Software\Microsoft\Windows\CurrentVersion\policies\system -Name EnableLUA -PropertyType DWord -Value 1 -Force | Out-Null
+#>
