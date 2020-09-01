@@ -1,12 +1,11 @@
 ﻿# Download latest version of script
 $OldScript = $MyInvocation.MyCommand.Path
 $NewScript = -join ($PSScriptRoot.Substring(0,3), $MyInvocation.MyCommand)
-Invoke-WebRequest https://raw.githubusercontent.com/RaySmalley/PowerShell/master/new-pc-setup.ps1 -OutFile -join ($PSScriptRoot.Substring(0,3), $MyInvocation.MyCommand)
-Start-Sleep 3
+Invoke-WebRequest https://raw.githubusercontent.com/RaySmalley/PowerShell/master/new-pc-setup.ps1 -OutFile $NewScript
 
 # Test for elevation
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
-    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$NewScript`"" -Verb RunAs
     Exit
 }
 
@@ -16,6 +15,8 @@ Write-Host '# 2020                      #'`n
 
 # Delete old script
 if ($OldScript -ne $NewScript) {Remove-Item $OldScript -Force}
+
+Read-Host "Press Enter"
 <#
 # Disable UAC
 New-ItemProperty -Path HKLM:Software\Microsoft\Windows\CurrentVersion\policies\system -Name EnableLUA -PropertyType DWord -Value 0 -Force | Out-Null
