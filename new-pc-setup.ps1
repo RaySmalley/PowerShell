@@ -15,8 +15,6 @@ Write-Host '# PC Setup Script           #'
 Write-Host '# Ray Smalley               #'
 Write-Host '# 2020                      #'`n
 
-Read-Host "This is new script. Press Enter"
-<#
 # Disable UAC
 New-ItemProperty -Path HKLM:Software\Microsoft\Windows\CurrentVersion\policies\system -Name EnableLUA -PropertyType DWord -Value 0 -Force | Out-Null
 
@@ -306,4 +304,3 @@ Remove-Item "$env:TEMP\appdefaults.xml" -Force -ErrorAction SilentlyContinue
 
 # Re-enable UAC
 New-ItemProperty -Path HKLM:Software\Microsoft\Windows\CurrentVersion\policies\system -Name EnableLUA -PropertyType DWord -Value 1 -Force | Out-Null
-#>
