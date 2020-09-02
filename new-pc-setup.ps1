@@ -126,7 +126,7 @@ $ODTXML = @"
       <Language ID="en-us" />
     </Product>
   </Add>
-  <!--  <Display Level="Full" AcceptEULA="TRUE" />  -->
+  <Display Level="Full" AcceptEULA="TRUE" />
 </Configuration>
 "@
 $ODTXML > "$PSScriptRoot\install\Office365\Office365BusinessRetail64.xml"
