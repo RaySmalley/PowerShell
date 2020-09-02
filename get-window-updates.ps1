@@ -1,6 +1,6 @@
 ﻿# Windows Updates
 Write-Host "Checking for Windows Updates..."`n
-if (-not (Get-Module -ListAvailable -Name PSWindowsUpdate)) { 
+if (-Not (Get-Module -ListAvailable -Name PSWindowsUpdate)) { 
     Install-PackageProvider -Name NuGet -Force
     Install-Module PSWindowsUpdate -Force
 }
