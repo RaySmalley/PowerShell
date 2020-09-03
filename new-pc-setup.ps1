@@ -122,23 +122,27 @@ if (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\
 # Install Office 365
 $ODT64XML = @"
 <Configuration>
-  <Add SourcePath="$PSScriptRoot\install\Office365\Office365BusinessRetail32" OfficeClientEdition="32">
+  <Add SourcePath="$PSScriptRoot\install\Office365\Office365BusinessRetail32" OfficeClientEdition="32" Channel="Current">
     <Product ID="O365BusinessRetail">
       <Language ID="en-us" />
     </Product>
   </Add>
+  <Updates Enabled="TRUE" />
   <Display Level="Full" AcceptEULA="TRUE" />
+  <Logging Level="Standard" Path="C:\Temp\odt.log" />
 </Configuration>
 "@
 $ODT64XML > "$PSScriptRoot\install\Office365\Office365BusinessRetail32.xml"
 $ODT64XML = @"
 <Configuration>
-  <Add SourcePath="$PSScriptRoot\install\Office365\Office365BusinessRetail64" OfficeClientEdition="64">
+  <Add SourcePath="$PSScriptRoot\install\Office365\Office365BusinessRetail64" OfficeClientEdition="64" Channel="Current">
     <Product ID="O365BusinessRetail">
       <Language ID="en-us" />
     </Product>
   </Add>
+  <Updates Enabled="TRUE" />
   <Display Level="Full" AcceptEULA="TRUE" />
+  <Logging Level="Standard" Path="C:\Temp\odt.log" />
 </Configuration>
 "@
 $ODT64XML > "$PSScriptRoot\install\Office365\Office365BusinessRetail64.xml"
