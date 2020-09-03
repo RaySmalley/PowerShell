@@ -90,7 +90,7 @@ $ODTURL = $(Get-ODTUri)
 Invoke-WebRequest -UseBasicParsing -Uri $ODTURL -OutFile $env:TEMP\ODT.exe
 Start-Process -FilePath "$env:TEMP\ODT.exe" -ArgumentList /quiet,/extract:$PSScriptRoot\install\Office365\ -Wait
 Remove-Item "$env:TEMP\ODT.exe" -Force
-#Remove-Item $PSScriptRoot\install\Office365\configuration* -Force -ErrorAction SilentlyContinue
+Remove-Item $PSScriptRoot\install\Office365\*.xml -Force -ErrorAction SilentlyContinue
 
 # Remove Office trials if installed
 $OfficeRemovalXML = @'
@@ -130,7 +130,7 @@ $ODT64XML = @"
   <Display Level="Full" AcceptEULA="TRUE" />
 </Configuration>
 "@
-$ODT64XML > "$PSScriptRoot\install\Office365\configuration-Office365-x86.xml"
+$ODT64XML > "$PSScriptRoot\install\Office365\Office365BusinessRetail32.xml"
 $ODT64XML = @"
 <Configuration>
   <Add SourcePath="$PSScriptRoot\install\Office365\Office365BusinessRetail64" OfficeClientEdition="64">
@@ -141,17 +141,17 @@ $ODT64XML = @"
   <Display Level="Full" AcceptEULA="TRUE" />
 </Configuration>
 "@
-$ODT64XML > "$PSScriptRoot\install\Office365\configuration-Office365-x64.xml"
+$ODT64XML > "$PSScriptRoot\install\Office365\Office365BusinessRetail64.xml"
 
 if (-Not (Test-Path "$PSScriptRoot\install\Office365\Office365BusinessRetail64\Office\Data\*.cab")) {
     Write-Host "Downloading Office 365..."`n
-    Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /download,"$PSScriptRoot\install\Office365\configuration-Office365-x64.xml" -WindowStyle Hidden -Wait
+    Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /download,"$PSScriptRoot\install\Office365\Office365BusinessRetail64.xml" -WindowStyle Hidden -Wait
     Write-Host "Office 365 download complete."`n
 }
 if (-not (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where { $_.DisplayName -match "es-es" })) {
     if (-not (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where { $_.DisplayName -match "Office 365" })) {
         Write-Host "Installing Office 365..."`n
-        Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /configure,"$PSScriptRoot\install\Office365\configuration-Office365-x64.xml" -WindowStyle Hidden -Wait
+        Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /configure,"$PSScriptRoot\install\Office365\Office365BusinessRetail64.xml" -WindowStyle Hidden -Wait
         Write-Host "Office 365 installation complete."`n
     }
 }
