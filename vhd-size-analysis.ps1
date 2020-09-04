@@ -1,4 +1,4 @@
-﻿# Download latest version of script
+﻿# Download the latest version of script
 $ProgressPreference = 'SilentlyContinue'
 Invoke-WebRequest https://raw.githubusercontent.com/RaySmalley/PowerShell/master/vhd-size-analysis.ps1 -OutFile $PSCommandPath
 
