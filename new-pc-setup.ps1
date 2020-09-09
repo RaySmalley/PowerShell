@@ -48,14 +48,16 @@ if ($env:COMPUTERNAME -match "DESKTOP") {
     Start-Sleep 3
     For ($i=1; $i -le 18; $i++) {(New-Object -ComObject WScript.Shell).SendKeys([char]175)}
     $NewName = Read-Host "Enter new computer name: "
-    Rename-Computer -NewName $NewName
+    Rename-Computer -NewName $NewName | Out-Null
     Write-Host "Renamed PC from $env:COMPUTERNAME to $NewName"`n
 }
 
 # Windows Updates
 Write-Host "Checking for Windows Updates..."`n
 if (-not (Get-Module -ListAvailable -Name PSWindowsUpdate)) { 
+    Write-Host "Installing Package Provider: NuGet..."
     Install-PackageProvider -Name NuGet -Force
+    Write-Host "Installing Module: PSWindowsUpdate..."
     Install-Module PSWindowsUpdate -Force
 }
 if (Get-WindowsUpdate -AcceptAll -Install -AutoReboot) {
