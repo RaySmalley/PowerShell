@@ -18,10 +18,9 @@ Write-Host '# PC Setup Script           #'
 Write-Host '# Ray Smalley               #'
 Write-Host '# 2020                      #'`n
 
-# BROKEN #
 # Download and extract Windows 10 Configuration Designer setup files
-#Invoke-WebRequest https://raw.githubusercontent.com/RaySmalley/PowerShell/master/new-pc-setup.zip -OutFile $env:TEMP\new-pc-setup.zip
-#Expand-Archive -Path $env:TEMP\new-pc-setup.zip -DestinationPath $PSScriptRoot -Force
+Invoke-WebRequest https://raw.githubusercontent.com/RaySmalley/PowerShell/master/new-pc-setup.zip -OutFile $env:TEMP\new-pc-setup.zip
+Expand-Archive -Path $env:TEMP\new-pc-setup.zip -DestinationPath $PSScriptRoot -Force
 
 # Disable UAC
 New-ItemProperty -Path HKLM:Software\Microsoft\Windows\CurrentVersion\policies\system -Name EnableLUA -PropertyType DWord -Value 0 -Force | Out-Null
