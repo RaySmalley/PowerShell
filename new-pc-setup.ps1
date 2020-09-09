@@ -122,47 +122,43 @@ if (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\
 }
 
 # Install Office 365
-$ODT64XML = @"
-<Configuration>
-  <Add SourcePath="$PSScriptRoot\install\Office365\Office365BusinessRetail32" OfficeClientEdition="32" Channel="Current">
-    <Product ID="O365BusinessRetail">
-      <Language ID="en-us" />
-    </Product>
-  </Add>
-  <Updates Enabled="TRUE" />
-  <Display Level="Full" AcceptEULA="TRUE" />
-  <Logging Level="Standard" Path="$env:TEMP\OfficeInstallLogs" />
-</Configuration>
-"@
-$ODT64XML > "$PSScriptRoot\install\Office365\Office365BusinessRetail32.xml"
-$ODT64XML = @"
-<Configuration>
-  <Add SourcePath="$PSScriptRoot\install\Office365\Office365BusinessRetail64" OfficeClientEdition="64" Channel="Current">
-    <Product ID="O365BusinessRetail">
-      <Language ID="en-us" />
-    </Product>
-  </Add>
-  <Updates Enabled="TRUE" />
-  <Display Level="Full" AcceptEULA="TRUE" />
-  <Logging Level="Standard" Path="$env:TEMP\OfficeInstallLogs" />
-</Configuration>
-"@
-$ODT64XML > "$PSScriptRoot\install\Office365\Office365BusinessRetail64.xml"
 
-if (-Not (Test-Path "$PSScriptRoot\install\Office365\Office365BusinessRetail64\Office\Data\*.cab")) {
+### TEMPORARY ###
+if (Test-Path $PSScriptRoot\install\Office365\Office365BusinessRetail) { 
+    Move-Item $PSScriptRoot\install\Office365\Office365BusinessRetail\Office $PSScriptRoot\install\Office365\ | Out-Null
+    Remove-Item $PSScriptRoot\install\Office365\Office365BusinessRetail -Force
+}
+### TEMPORARY ###
+
+$ODTXML = @"
+<Configuration>
+  <Add OfficeClientEdition="64" Channel="Current">
+    <Product ID="O365BusinessRetail">
+      <Language ID="en-us" />
+    </Product>
+  </Add>
+  <Updates Enabled="TRUE" />
+  <Display Level="Full" AcceptEULA="TRUE" />
+  <Logging Level="Standard" Path="$env:TEMP\OfficeInstallLogs" />
+</Configuration>
+"@
+$ODTXML > "$PSScriptRoot\install\Office365\Office365BusinessRetail.xml"
+
+if (-Not (Test-Path "$PSScriptRoot\install\Office365\Office\Data\*.cab")) {
     Write-Host "Downloading Office 365..."`n
-    Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /download,"$PSScriptRoot\install\Office365\Office365BusinessRetail64.xml" -WindowStyle Hidden -Wait
+    Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /download,"$PSScriptRoot\install\Office365\Office365BusinessRetail.xml" -WindowStyle Hidden -Wait
     Write-Host "Office 365 download complete."`n
 }
 if (-not (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where { $_.DisplayName -match "es-es" })) {
     if (-not (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where { $_.DisplayName -match "Office 365" })) {
         Write-Host "Installing Office 365..."`n
-        Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /configure,"$PSScriptRoot\install\Office365\Office365BusinessRetail64.xml" -WindowStyle Hidden -Wait
+        Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /configure,"$PSScriptRoot\install\Office365\Office365BusinessRetail.xml" -WindowStyle Hidden -Wait
         if (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where { $_.DisplayName -match "Office 365" }) {
             Write-Host "Office 365 installation complete."`n
         } else {
             Write-Host "Office 365 installation failed."
             Write-Host "Please review logs at $env:TEMP\OfficeInstallLogs"`n
+        }
     }
 }
 
