@@ -2,9 +2,9 @@
 Start-Transcript -Path $PSScriptRoot\new-pc-setup.log | Out-Null
 
 # Download latest version of script
+$global:ProgressPreference = 'SilentlyContinue'
 $OldScript = $MyInvocation.MyCommand.Path
 $NewScript = -join ($PSScriptRoot.Substring(0,3), $MyInvocation.MyCommand)
-$ProgressPreference = 'SilentlyContinue'
 Invoke-WebRequest https://raw.githubusercontent.com/RaySmalley/PowerShell/master/new-pc-setup.ps1 -OutFile $NewScript
 if ($OldScript -ne $NewScript) {Remove-Item $OldScript -Force}
 
@@ -131,7 +131,7 @@ $ODT64XML = @"
   </Add>
   <Updates Enabled="TRUE" />
   <Display Level="Full" AcceptEULA="TRUE" />
-  <Logging Level="Standard" Path="C:\Temp\odt.log" />
+  <Logging Level="Standard" Path="$env:TEMP\OfficeInstallLogs" />
 </Configuration>
 "@
 $ODT64XML > "$PSScriptRoot\install\Office365\Office365BusinessRetail32.xml"
@@ -144,7 +144,7 @@ $ODT64XML = @"
   </Add>
   <Updates Enabled="TRUE" />
   <Display Level="Full" AcceptEULA="TRUE" />
-  <Logging Level="Standard" Path="C:\Temp\odt.log" />
+  <Logging Level="Standard" Path="$env:TEMP\OfficeInstallLogs" />
 </Configuration>
 "@
 $ODT64XML > "$PSScriptRoot\install\Office365\Office365BusinessRetail64.xml"
@@ -158,7 +158,11 @@ if (-not (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Unin
     if (-not (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where { $_.DisplayName -match "Office 365" })) {
         Write-Host "Installing Office 365..."`n
         Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /configure,"$PSScriptRoot\install\Office365\Office365BusinessRetail64.xml" -WindowStyle Hidden -Wait
-        Write-Host "Office 365 installation complete."`n
+        if (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where { $_.DisplayName -match "Office 365" }) {
+            Write-Host "Office 365 installation complete."`n
+        } else {
+            Write-Host "Office 365 installation failed."
+            Write-Host "Please review logs at $env:TEMP\OfficeInstallLogs"`n
     }
 }
 
