@@ -130,7 +130,7 @@ if (Test-Path $PSScriptRoot\install\Office365\Office365BusinessRetail64) {
 }
 ### TEMPORARY ###
 
-$ODTXML = @"
+$Office365BusinessRetailXML = @"
 <Configuration>
   <Add OfficeClientEdition="64" Channel="Current">
     <Product ID="O365BusinessRetail">
@@ -142,7 +142,7 @@ $ODTXML = @"
   <Logging Level="Standard" Path="$env:TEMP\OfficeInstallLogs" />
 </Configuration>
 "@
-$ODTXML > "$PSScriptRoot\install\Office365\Office365BusinessRetail.xml"
+$Office365BusinessRetailXML > "$PSScriptRoot\install\Office365\Office365BusinessRetail.xml"
 
 if (-Not (Test-Path "$PSScriptRoot\install\Office365\Office\Data\*.cab")) {
     Write-Host "Downloading Office 365..."`n
