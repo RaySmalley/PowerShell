@@ -127,7 +127,7 @@ if (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\
 ### TEMPORARY ###
 if (Test-Path $PSScriptRoot\install\Office365\Office365BusinessRetail64) { 
     Move-Item $PSScriptRoot\install\Office365\Office365BusinessRetail64\Office $PSScriptRoot\install\Office365\ | Out-Null
-    Remove-Item $PSScriptRoot\install\Office365\Office365BusinessRetail* -Force
+    Remove-Item $PSScriptRoot\install\Office365\Office365BusinessRetail* -Force -Recurse
 }
 ### TEMPORARY ###
 
