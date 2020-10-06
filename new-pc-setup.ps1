@@ -158,10 +158,10 @@ if (-Not (Test-Path "$PSScriptRoot\install\Office365\Office\Data\*.cab")) {
     Write-Host "Office 365 download complete."`n
 }
 if (-not (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where { $_.DisplayName -match "es-es" })) {
-    if (-not (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where { $_.DisplayName -match "Office 365" })) {
+    if (-not (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where { $_.DisplayName -match "Microsoft 365" })) {
         Write-Host "Installing Office 365..."`n
         Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /configure,"$PSScriptRoot\install\Office365\Office365BusinessRetail.xml" -WindowStyle Hidden -Wait
-        if (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where { $_.DisplayName -match "Office 365" }) {
+        if (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where { $_.DisplayName -match "Microsoft 365" }) {
             Write-Host "Office 365 installation complete."`n
         } else {
             Write-Host "Office 365 installation failed."
