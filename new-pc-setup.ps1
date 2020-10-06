@@ -4,7 +4,12 @@ Start-Transcript -Path $PSScriptRoot\new-pc-setup.log | Out-Null
 # Download latest version of script
 $global:ProgressPreference = 'SilentlyContinue'
 $OldScript = $MyInvocation.MyCommand.Path
-$NewScript = -join ($PSScriptRoot.Substring(0,3), $MyInvocation.MyCommand)
+$DriveLetter = $PSScriptRoot.Substring(0,3)
+if ($DriveLetter -eq "C:\") {
+    $NewScript = $OldScript
+} else {
+    $NewScript = -join ($DriveLetter, $MyInvocation.MyCommand)
+}
 Invoke-WebRequest https://raw.githubusercontent.com/RaySmalley/PowerShell/master/new-pc-setup.ps1 -OutFile $NewScript
 if ($OldScript -ne $NewScript) {Remove-Item $OldScript -Force}
 
