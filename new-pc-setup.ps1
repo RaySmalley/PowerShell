@@ -41,13 +41,6 @@ New-Item $StartupScript -Force | Out-Null
 Add-Content $StartupScript "PowerShell Set-ExecutionPolicy Bypass -Force"
 Add-Content $StartupScript "PowerShell -File $PSCommandPath"
 
-# Change Power Settings
-Write-Host "Changing power settings..."`n
-powercfg /change monitor-timeout-ac 20
-powercfg /change standby-timeout-ac 0
-powercfg /SETACVALUEINDEX SCHEME_CURRENT 2a737441-1930-4402-8d77-b2bebba308a3 48e6b7a6-50f5-4782-a5d4-53bb8f07e226 0 # USB Selective Suspend
-Write-Host "Power settings changed."`n
-
 # Rename Computer
 if ($env:COMPUTERNAME -match "DESKTOP") {
     Write-Host "Renaming computer..."`n
@@ -59,6 +52,13 @@ if ($env:COMPUTERNAME -match "DESKTOP") {
     Rename-Computer -NewName $NewName | Out-Null
     Write-Host "Renamed PC from $env:COMPUTERNAME to $NewName"`n
 }
+
+# Change Power Settings
+Write-Host "Changing power settings..."`n
+powercfg /change monitor-timeout-ac 20
+powercfg /change standby-timeout-ac 0
+powercfg /SETACVALUEINDEX SCHEME_CURRENT 2a737441-1930-4402-8d77-b2bebba308a3 48e6b7a6-50f5-4782-a5d4-53bb8f07e226 0 # USB Selective Suspend
+Write-Host "Power settings changed."`n
 
 # Windows Updates
 Write-Host "Checking for Windows Updates..."`n
@@ -74,7 +74,25 @@ if (Get-WindowsUpdate -AcceptAll -Install -AutoReboot) {
     Write-Host "No updates available."`n
 }
 
-Start-Sleep 10
+
+# Delete Edge shortcut from desktop
+Remove-Item "$env:USERPROFILE\Desktop\Microsoft Edge.lnk" -Force -ErrorAction SilentlyContinue
+
+# Install Chrome
+if (-not (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\*" | Where { $_.PSChildName -match "chrome" })) {
+    Write-Host "Installing Google Chrome..."`n
+    (New-Object System.Net.WebClient).DownloadFile("http://dl.google.com/chrome/install/375.126/chrome_installer.exe", "$env:TEMP\ChromeSetup.exe")
+    Start-Process -FilePath "$env:TEMP\ChromeSetup.exe" -ArgumentList /silent, /install -Wait
+    Write-Host "Google Chrome installation complete."`n
+}
+
+# Install Adober Reader
+if (-not (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\*" | Where { $_.PSChildName -match "AcroRd32" })) {
+    Write-Host "Installing Adober Reader..."`n
+    (New-Object System.Net.WebClient).DownloadFile("http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/2000920063/AcroRdrDC2000920063_en_US.exe", "$env:TEMP\AdobeReaderSetup.exe")
+    Start-Process -FilePath "$env:TEMP\AdobeReaderSetup.exe" -ArgumentList /sPB -Wait
+    Write-Host "Adobe Reader installation complete."`n
+}
 
 # Download Office Deployment Toolkit
 function Get-ODTUri {
@@ -132,10 +150,10 @@ if (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\
 # Install Office 365
 
 ### TEMPORARY ###
-if (Test-Path $PSScriptRoot\install\Office365\Office365BusinessRetail64) { 
-    Move-Item $PSScriptRoot\install\Office365\Office365BusinessRetail64\Office $PSScriptRoot\install\Office365\ | Out-Null
-    Remove-Item $PSScriptRoot\install\Office365\Office365BusinessRetail* -Force -Recurse
-}
+#if (Test-Path $PSScriptRoot\install\Office365\Office365BusinessRetail64) { 
+#    Move-Item $PSScriptRoot\install\Office365\Office365BusinessRetail64\Office $PSScriptRoot\install\Office365\ | Out-Null
+#    Remove-Item $PSScriptRoot\install\Office365\Office365BusinessRetail* -Force -Recurse
+#}
 ### TEMPORARY ###
 
 $Office365BusinessRetailXML = @"
@@ -168,25 +186,6 @@ if (-not (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Unin
             Write-Host "Please review logs at $env:TEMP\OfficeInstallLogs"`n
         }
     }
-}
-
-# Delete Edge shortcut from desktop
-Remove-Item "$env:USERPROFILE\Desktop\Microsoft Edge.lnk" -Force -ErrorAction SilentlyContinue
-
-# Install Chrome
-if (-not (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\*" | Where { $_.PSChildName -match "chrome" })) {
-    Write-Host "Installing Google Chrome..."`n
-    (New-Object System.Net.WebClient).DownloadFile("http://dl.google.com/chrome/install/375.126/chrome_installer.exe", "$env:TEMP\ChromeSetup.exe")
-    Start-Process -FilePath "$env:TEMP\ChromeSetup.exe" -ArgumentList /silent, /install -Wait
-    Write-Host "Google Chrome installation complete."`n
-}
-
-# Install Adober Reader
-if (-not (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\*" | Where { $_.PSChildName -match "AcroRd32" })) {
-    Write-Host "Installing Adober Reader..."`n
-    (New-Object System.Net.WebClient).DownloadFile("http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/2000920063/AcroRdrDC2000920063_en_US.exe", "$env:TEMP\AdobeReaderSetup.exe")
-    Start-Process -FilePath "$env:TEMP\AdobeReaderSetup.exe" -ArgumentList /sPB -Wait
-    Write-Host "Adobe Reader installation complete."`n
 }
 
 # End prompt
