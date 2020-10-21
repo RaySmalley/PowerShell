@@ -1,5 +1,5 @@
 ﻿# Start script logging
-Start-Transcript -Path $PSScriptRoot\new-pc-setup.log | Out-Null
+Start-Transcript -Path $env:TEMP\new-pc-setup.log | Out-Null
 
 # Download latest version of script
 $global:ProgressPreference = 'SilentlyContinue'
