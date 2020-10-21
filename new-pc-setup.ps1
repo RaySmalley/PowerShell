@@ -124,6 +124,7 @@ Remove-Item $PSScriptRoot\install\Office365\*.xml -Force -ErrorAction SilentlyCo
 $OfficeRemovalXML = @'
 <Configuration>
   <Display Level="None" AcceptEULA="True" />
+  <Logging Level="Standard" Path="$env:TEMP\OfficeRemovalLogs" />
   <Remove All="TRUE" />
 </Configuration>
 '@
