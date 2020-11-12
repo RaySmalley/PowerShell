@@ -70,6 +70,7 @@ if (-not (Get-Module -ListAvailable -Name PSWindowsUpdate)) {
 }
 if (Get-WindowsUpdate -AcceptAll -Install -AutoReboot) {
     Write-Host "Windows Updates installed."`n
+    Start-Sleep 15
 } else {
     Write-Host "No updates available."`n
 }
