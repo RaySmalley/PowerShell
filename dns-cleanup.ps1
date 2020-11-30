@@ -1,0 +1,1 @@
+﻿(Get-DnsServerResourceRecord -ZoneName $env:USERDNSDOMAIN -RRType "A" | Where {($_.Timestamp -le (get-date).adddays(-180)) -AND ($_.Timestamp -like "*/*")}) | Remove-DnsServerResourceRecord -ZoneName $env:USERDNSDOMAIN -WhatIf

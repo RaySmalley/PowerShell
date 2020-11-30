@@ -133,7 +133,7 @@ $OfficeRemovalXML > "$PSScriptRoot\install\Office365\RemoveOffice.xml"
 
 if (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where { $_.DisplayName -match "es-es" }){
     Write-Host "Removing Office trial..."`n
-    Start-Process -FilePath "$PSScriptRoot\install\Office365\setupodt.exe" -ArgumentList /configure,"$PSScriptRoot\install\Office365\RemoveOffice.xml" -WindowStyle Hidden -Wait
+    Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /configure,"$PSScriptRoot\install\Office365\RemoveOffice.xml" -WindowStyle Hidden -Wait
     if (-Not (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where { $_.DisplayName -match "es-es" })) {
         Write-Host "Office trial removal complete. Restarting computer..."`n
         Start-Sleep 5
@@ -144,7 +144,7 @@ if (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\
         Start-Sleep 3
         For ($i=1; $i -le 18; $i++) {(New-Object -ComObject WScript.Shell).SendKeys([char]175)}
         Write-Host "Office trial removal failed."`n -ForegroundColor Red
-        Read-Host -Prompt "Please uninstall Office trial manually and restart script."
+        Read-Host -Prompt "Please uninstall Office trial manually and restart script. Exiting..."
         Exit 2
     }
 }
@@ -174,13 +174,13 @@ $Office365BusinessRetailXML > "$PSScriptRoot\install\Office365\Office365Business
 
 if (-Not (Test-Path "$PSScriptRoot\install\Office365\Office\Data\*.cab")) {
     Write-Host "Downloading Office 365..."`n
-    Start-Process -FilePath "$PSScriptRoot\install\Office365\setupodt.exe" -ArgumentList /download,"$PSScriptRoot\install\Office365\Office365BusinessRetail.xml" -WindowStyle Hidden -Wait
+    Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /download,"$PSScriptRoot\install\Office365\Office365BusinessRetail.xml" -WindowStyle Hidden -Wait
     Write-Host "Office 365 download complete."`n
 }
 if (-not (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where { $_.DisplayName -match "es-es" })) {
     if (-not (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where { $_.DisplayName -match "Microsoft 365" })) {
         Write-Host "Installing Office 365..."`n
-        Start-Process -FilePath "$PSScriptRoot\install\Office365\setupodt.exe" -ArgumentList /configure,"$PSScriptRoot\install\Office365\Office365BusinessRetail.xml" -WindowStyle Hidden -Wait
+        Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /configure,"$PSScriptRoot\install\Office365\Office365BusinessRetail.xml" -WindowStyle Hidden -Wait
         if (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where { $_.DisplayName -match "Microsoft 365" }) {
             Write-Host "Office 365 installation complete."`n
         } else {
