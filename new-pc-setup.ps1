@@ -64,20 +64,24 @@ Add-Content $StartupScript "PowerShell Set-ExecutionPolicy Bypass -Force"
 Add-Content $StartupScript "PowerShell -File $PSCommandPath"
 
 # Windows Updates
-Write-Host "Checking for Windows Updates..."`n
 if (-not (Get-Module -ListAvailable -Name PSWindowsUpdate)) { 
-    Write-Host "Installing Package Provider: NuGet..."
+    Write-Host "Installing Package Provider: NuGet..."`n
     Install-PackageProvider -Name NuGet -Force
-    Write-Host "Installing Module: PSWindowsUpdate..."
+    Write-Host "Installing Module: PSWindowsUpdate..."`n
     Install-Module PSWindowsUpdate -Force
+    if (Get-Module -ListAvailable -Name PSWindowsUpdate) {
+        Write-Host "Module: PSWindowsUpdate installed."`n
+    } else {
+        Write-Host "Module: PSWindowsUpdate installed."`n
+    }
 }
+Write-Host "Checking for Windows Updates..."`n
 if (Get-WindowsUpdate -AcceptAll -Install -AutoReboot) {
     Write-Host "Windows Updates installed."`n
     Start-Sleep 15
 } else {
     Write-Host "No updates available."`n
 }
-
 
 # Delete Edge shortcut from desktop
 Remove-Item "$env:USERPROFILE\Desktop\Microsoft Edge.lnk" -Force -ErrorAction SilentlyContinue
