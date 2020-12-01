@@ -66,7 +66,7 @@ Add-Content $StartupScript "PowerShell -File $PSCommandPath"
 # Windows Updates
 if (-not (Get-Module -ListAvailable -Name PSWindowsUpdate)) { 
     Write-Host "Installing Package Provider: NuGet..."`n
-    Install-PackageProvider -Name NuGet -Force
+    Install-PackageProvider -Name NuGet -Force | Out-Null
     Write-Host "Installing Module: PSWindowsUpdate..."`n
     Install-Module PSWindowsUpdate -Force
     if (Get-Module -ListAvailable -Name PSWindowsUpdate) {
