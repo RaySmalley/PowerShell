@@ -35,12 +35,6 @@ New-ItemProperty -Path HKLM:Software\Microsoft\Windows\CurrentVersion\policies\s
 # Remove 415Admin password if present
 if (Get-LocalUser 415Admin -ErrorAction SilentlyContinue) {Set-LocalUser -name "415Admin" -Password ([securestring]::new())}
 
-# Allow script to run after reboot
-$StartupScript = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\pc-setup-autostart.bat"
-New-Item $StartupScript -Force | Out-Null
-Add-Content $StartupScript "PowerShell Set-ExecutionPolicy Bypass -Force"
-Add-Content $StartupScript "PowerShell -File $PSCommandPath"
-
 # Rename Computer
 if ($env:COMPUTERNAME -match "DESKTOP") {
     Write-Host "Renaming computer..."`n
@@ -59,6 +53,12 @@ powercfg /change monitor-timeout-ac 20
 powercfg /change standby-timeout-ac 0
 powercfg /SETACVALUEINDEX SCHEME_CURRENT 2a737441-1930-4402-8d77-b2bebba308a3 48e6b7a6-50f5-4782-a5d4-53bb8f07e226 0 # USB Selective Suspend
 Write-Host "Power settings changed."`n
+
+# Allow script to run after reboot
+$StartupScript = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\pc-setup-autostart.bat"
+New-Item $StartupScript -Force | Out-Null
+Add-Content $StartupScript "PowerShell Set-ExecutionPolicy Bypass -Force"
+Add-Content $StartupScript "PowerShell -File $PSCommandPath"
 
 # Windows Updates
 Write-Host "Checking for Windows Updates..."`n
