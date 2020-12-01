@@ -32,6 +32,9 @@ if ($DriveLetter -ne "C:\") {
 # Disable UAC
 New-ItemProperty -Path HKLM:Software\Microsoft\Windows\CurrentVersion\policies\system -Name EnableLUA -PropertyType DWord -Value 0 -Force | Out-Null
 
+# Set Time Zone
+Set-TimeZone -Name "Eastern Standard Time"
+
 # Remove 415Admin password if present
 if (Get-LocalUser 415Admin -ErrorAction SilentlyContinue) {Set-LocalUser -name "415Admin" -Password ([securestring]::new())}
 
