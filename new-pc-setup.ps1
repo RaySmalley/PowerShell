@@ -123,13 +123,15 @@ function Get-ODTUri {
         Write-Output $ODTUri.href
     }
 }
-if (-Not (Test-Path $PSScriptRoot\install\Office365)) {New-Item -ItemType Directory -Force -Path $PSScriptRoot\install\Office365 | Out-Null}
-Write-Host "Downloading latest version of Office 365 Deployment Tool (ODT)."`n
-$ODTURL = $(Get-ODTUri)
-Invoke-WebRequest -UseBasicParsing -Uri $ODTURL -OutFile $env:TEMP\ODT.exe
-Start-Process -FilePath "$env:TEMP\ODT.exe" -ArgumentList /quiet,/extract:$PSScriptRoot\install\Office365\ -Wait
-Remove-Item "$env:TEMP\ODT.exe" -Force
-Remove-Item $PSScriptRoot\install\Office365\*.xml -Force -ErrorAction SilentlyContinue
+if ((Get-ChildItem "$PSScriptRoot\install\Office365\setup.exe" -ErrorAction SilentlyContinue).CreationTime -lt (Get-Date).AddMonths(-1) -or -Not (Test-Path "$PSScriptRoot\install\Office365\setup.exe" -ErrorAction SilentlyContinue)) {
+    New-Item -ItemType Directory -Force -Path $PSScriptRoot\install\Office365 | Out-Null
+    Write-Host "Downloading latest version of Office 365 Deployment Tool (ODT)."`n
+    $ODTURL = $(Get-ODTUri)
+    Invoke-WebRequest -UseBasicParsing -Uri $ODTURL -OutFile $env:TEMP\ODT.exe
+    Start-Process -FilePath "$env:TEMP\ODT.exe" -ArgumentList /quiet,/extract:$PSScriptRoot\install\Office365\ -Wait
+    Remove-Item "$env:TEMP\ODT.exe" -Force
+    Remove-Item $PSScriptRoot\install\Office365\*.xml -Force -ErrorAction SilentlyContinue
+}
 
 # Remove Office trials if installed
 $OfficeRemovalXML = @'
