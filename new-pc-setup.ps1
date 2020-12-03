@@ -77,9 +77,10 @@ if (-not (Get-Module -ListAvailable -Name PSWindowsUpdate)) {
 }
 Write-Host "Checking for Windows Updates..."`n
 if (Get-WindowsUpdate) {
-    Write-Host "Installing Windows Updates..."`n
+    Write-Host "Windows Updates found. Installing..."`n
     Get-WindowsUpdate -AcceptAll -Install -AutoReboot
     Write-Host
+    Write-Host "Windows Updates installed."`n
     Start-Sleep 15
 } else {
     Write-Host "No updates available."`n
