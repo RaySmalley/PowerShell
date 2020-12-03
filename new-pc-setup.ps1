@@ -79,6 +79,7 @@ Write-Host "Checking for Windows Updates..."`n
 if (Get-WindowsUpdate) {
     Write-Host "Installing Windows Updates..."`n
     Get-WindowsUpdate -AcceptAll -Install -AutoReboot
+    Write-Host
     Start-Sleep 15
 } else {
     Write-Host "No updates available."`n
