@@ -87,7 +87,7 @@ if (Get-WindowsUpdate) {
 }
 
 # Run Dell Command Update
-Write-Host "Running Dell Command Update..."`n
+Write-Host "Running Dell Command Update... (If DCU searches longer than a few minutes just close the window to skip.)"`n
 Start-Process "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList /applyUpdates, -reboot=enable -Wait
 Start-Sleep 15
 Write-Host
@@ -96,19 +96,25 @@ Write-Host
 Remove-Item "$env:USERPROFILE\Desktop\Microsoft Edge.lnk" -Force -ErrorAction SilentlyContinue
 
 # Install Chrome
+Write-Host "Checking for Chrome..."`n
 if (-not (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\*" | Where { $_.PSChildName -match "chrome" })) {
     Write-Host "Installing Google Chrome..."`n
     (New-Object System.Net.WebClient).DownloadFile("http://dl.google.com/chrome/install/375.126/chrome_installer.exe", "$env:TEMP\ChromeSetup.exe")
     Start-Process -FilePath "$env:TEMP\ChromeSetup.exe" -ArgumentList /silent, /install -Wait
     Write-Host "Google Chrome installation complete."`n
+} else {
+    Write-Host "Chrome already installed."`n
 }
 
 # Install Adober Reader
+Write-Host "Checking for Adobe Reader..."`n
 if (-not (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\*" | Where { $_.PSChildName -match "AcroRd32" })) {
     Write-Host "Installing Adober Reader..."`n
     (New-Object System.Net.WebClient).DownloadFile("http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/2000920063/AcroRdrDC2000920063_en_US.exe", "$env:TEMP\AdobeReaderSetup.exe")
     Start-Process -FilePath "$env:TEMP\AdobeReaderSetup.exe" -ArgumentList /sPB -Wait
     Write-Host "Adobe Reader installation complete."`n
+} else {
+    Write-Host "Adobe Reader already installed."`n
 }
 
 # Download Office Deployment Toolkit
