@@ -86,6 +86,12 @@ if (Get-WindowsUpdate) {
     Write-Host "No updates available."`n
 }
 
+# Run Dell Command Update
+Write-Host "Running Dell Command Update..."`n
+Start-Process "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList /applyUpdates, -reboot=enable -Wait
+Start-Sleep 15
+Write-Host
+
 # Delete Edge shortcut from desktop
 Remove-Item "$env:USERPROFILE\Desktop\Microsoft Edge.lnk" -Force -ErrorAction SilentlyContinue
 
