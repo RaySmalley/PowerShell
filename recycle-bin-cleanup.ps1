@@ -1,1 +1,1 @@
-Get-ChildItem -Path 'C:\$Recycle.Bin\*\$I*' -Recurse -Force | Where-Object { $_.LastWriteTime -lt (Get-Date).AddMonths(-3) } | Remove-Item -Force -Confirm
+Get-ChildItem -Path 'C:\$Recycle.Bin\*\$I*' -Recurse -Force | Where-Object { $_.LastWriteTime -lt (Get-Date).AddMonths(-3) } | Remove-Item -Force -Confirm:$false
