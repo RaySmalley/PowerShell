@@ -176,14 +176,6 @@ if (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\
 }
 
 # Install Office 365
-
-### TEMPORARY ###
-#if (Test-Path $PSScriptRoot\install\Office365\Office365BusinessRetail64) { 
-#    Move-Item $PSScriptRoot\install\Office365\Office365BusinessRetail64\Office $PSScriptRoot\install\Office365\ | Out-Null
-#    Remove-Item $PSScriptRoot\install\Office365\Office365BusinessRetail* -Force -Recurse
-#}
-### TEMPORARY ###
-
 $Office365BusinessRetailXML = @"
 <Configuration>
   <Add OfficeClientEdition="64" Channel="Current">
@@ -202,6 +194,10 @@ if (-Not (Test-Path "$PSScriptRoot\install\Office365\Office\Data\*.cab")) {
     Write-Host "Downloading Office 365..."`n
     Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /download,"$PSScriptRoot\install\Office365\Office365BusinessRetail.xml" -WindowStyle Hidden -Wait
     Write-Host "Office 365 download complete."`n
+    if (Test-Path "C:\Windows\SysWOW64\Office\Data\*.cab") {
+        Write-Host "Copying Office files..."
+        Move-Item "C:\Windows\SysWOW64\Office" "$PSScriptRoot\install\Office365" | Out-Null
+    }
 }
 if (-not (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where { $_.DisplayName -match "es-es" })) {
     if (-not (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where { $_.DisplayName -match "Microsoft 365" })) {
