@@ -64,6 +64,7 @@ Add-Content $StartupScript "PowerShell Set-ExecutionPolicy Bypass -Force"
 Add-Content $StartupScript "PowerShell -File $PSCommandPath"
 
 # Windows Updates
+Shutdown -r -t 1200
 if (-not (Get-Module -ListAvailable -Name PSWindowsUpdate)) { 
     Write-Host "Installing Package Provider: NuGet..."`n
     Install-PackageProvider -Name NuGet -Force | Out-Null
@@ -85,6 +86,7 @@ if (Get-WindowsUpdate) {
 } else {
     Write-Host "No updates available."`n
 }
+Shutdown -a
 
 # Run Dell Command Update
 if ((Get-WmiObject -Class:Win32_ComputerSystem).Manufacturer -match "Dell") {
