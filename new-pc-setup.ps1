@@ -89,7 +89,7 @@ if (Get-WindowsUpdate) {
 Shutdown -a
 
 # Run Dell Command Update
-if ((Get-WmiObject -Class:Win32_ComputerSystem).Manufacturer -match "Dell") {
+if (Test-Path "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe") {
     Write-Host "Running Dell Command Update... (If DCU searches longer than a few minutes just close the window to skip.)"`n
     Start-Process "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList /applyUpdates, -reboot=enable -Wait
     Start-Sleep 15
@@ -197,7 +197,7 @@ if (-Not (Test-Path "$PSScriptRoot\install\Office365\Office\Data\*.cab")) {
     Start-Process -FilePath "$PSScriptRoot\install\Office365\setup.exe" -ArgumentList /download,"$PSScriptRoot\install\Office365\Office365BusinessRetail.xml" -WindowStyle Hidden -Wait
     Write-Host "Office 365 download complete."`n
     if (Test-Path "C:\Windows\SysWOW64\Office\Data\*.cab") {
-        Write-Host "Copying Office files..."
+        Write-Host "Moving Office files from C:\Windows\SysWOW64 to $PSScriptRoot\install\Office365..."`n
         Move-Item "C:\Windows\SysWOW64\Office" "$PSScriptRoot\install\Office365" | Out-Null
     }
 }
