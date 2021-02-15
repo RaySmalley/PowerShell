@@ -119,11 +119,13 @@ if ((-Not(Test-Path "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe")) -or ($dc
 }
 
 # Run DCU
-if (Test-Path "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe") {
+if ((Test-Path "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe") -or (Test-Path "C:\Program Files (x86)\Dell\CommandUpdate\dcu-cli.exe")) {
     Write-Host "Running Dell Command Update... (If DCU searches longer than a few minutes just close the window to skip.)"`n
     Start-Process "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList /applyUpdates, -reboot=enable -Wait
     Start-Sleep 15
     Write-Host
+} else {
+    Write-Host "Dell Command Update not installed. Skipping..."`n
 }
 
 # Delete Edge shortcut from desktop
