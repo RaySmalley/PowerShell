@@ -1,4 +1,6 @@
-﻿# Start script logging
+﻿#Test
+
+# Start script logging
 Start-Transcript -Path $env:TEMP\new-pc-setup.log | Out-Null
 
 # Download latest version of script
