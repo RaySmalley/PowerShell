@@ -92,7 +92,7 @@ Shutdown -a
 [System.Version]$dcuLatest = "4.1.0"
 $dcuVersion = [System.Version](Get-ItemProperty 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*' | Where-Object { $_.DisplayName -like "*Command | Update*" }).DisplayVersion
 if (-Not $dcuVersion) { $dcuVersion = [System.Version](Get-ItemProperty 'HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*' | Where-Object { $_.DisplayName -like "*Command | Update*" }).DisplayVersion }
-if ((-Not(Test-Path "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe")) -or ($dcuVersion -lt $dcuLatest)) {
+if ($dcuVersion -lt $dcuLatest) {
     # Download
     Write-Host "Dell Command Update needs installed/updated."`n
     $output = $env:TEMP + "\DCU.zip"
