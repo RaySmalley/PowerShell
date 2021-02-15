@@ -111,6 +111,11 @@ if ((-Not(Test-Path "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe")) -or ($dc
     # Install
     Write-Host "Installing Dell Command Update..."`n
     Start-Process -FilePath $env:TEMP\DCU\*.exe -ArgumentList "/s, /v`"/qn`"" -Wait
+
+    # Cleanup
+    Write-Host "Cleaning up..."`n
+    Remove-Item $output -Force
+    Remove-Item "$env:TEMP\DCU" -Recurse -Force
 }
 
 # Run DCU
