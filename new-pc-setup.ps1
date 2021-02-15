@@ -1,6 +1,4 @@
-﻿#Test
-
-# Start script logging
+﻿# Start script logging
 Start-Transcript -Path $env:TEMP\new-pc-setup.log | Out-Null
 
 # Download latest version of script
@@ -90,7 +88,32 @@ if (Get-WindowsUpdate) {
 }
 Shutdown -a
 
-# Run Dell Command Update
+# Dell Command Update
+[System.Version]$dcuLatest = "4.1.0"
+$dcuVersion = [System.Version](Get-ItemProperty 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*' | Where-Object { $_.DisplayName -like "*Command | Update*" }).DisplayVersion
+if (-Not $dcuVersion) { $dcuVersion = [System.Version](Get-ItemProperty 'HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*' | Where-Object { $_.DisplayName -like "*Command | Update*" }).DisplayVersion }
+if ((-Not(Test-Path "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe")) -or ($dcuVersion -lt $dcuLatest)) {
+    # Download
+    Write-Host "Dell Command Update needs installed/updated."`n
+    $output = $env:TEMP + "\DCU.zip"
+    $dcuURL = "https://dl.dell.com/FOLDER06986400M/1/Dell-Command-Update-Application_P5R35_WIN_4.1.0_A00.EXE"
+    $Error.Clear()
+    
+    Write-Host "Downloading Dell Command Update..."`n
+    if (!(Test-Path $output)) { (New-Object System.Net.WebClient).DownloadFile($dcuURL, $output) }
+    if ($Error.count -gt 0) { Write-Host "Retrying..."`n; $Error.Clear(); (New-Object System.Net.WebClient).DownloadFile($dcuURL, $output) }
+    if ($Error.count -gt 0) { Write-Host "Download failed. Exiting..."; Exit 102 }
+
+    # Extract
+    Write-Host "Extracting files..."`n
+    Expand-Archive -Path $output -DestinationPath $env:TEMP\DCU
+
+    # Install
+    Write-Host "Installing Dell Command Update..."`n
+    Start-Process -FilePath $env:TEMP\DCU\*.exe -ArgumentList "/s, /v`"/qn`"" -Wait
+}
+
+# Run DCU
 if (Test-Path "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe") {
     Write-Host "Running Dell Command Update... (If DCU searches longer than a few minutes just close the window to skip.)"`n
     Start-Process "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList /applyUpdates, -reboot=enable -Wait
@@ -128,12 +151,12 @@ function Get-ODTUri {
     [CmdletBinding()]
     [OutputType([string])]
     param ()
-    $URL = "https://www.microsoft.com/en-us/download/confirmation.aspx?id=49117"
+    $dcuURL = "https://www.microsoft.com/en-us/download/confirmation.aspx?id=49117"
     try {
-        $response = Invoke-WebRequest -UseBasicParsing -Uri $URL -ErrorAction SilentlyContinue
+        $response = Invoke-WebRequest -UseBasicParsing -Uri $dcuURL -ErrorAction SilentlyContinue
     }
     catch {
-        Throw "Failed to connect to ODT: $URL with error $_."
+        Throw "Failed to connect to ODT: $dcuURL with error $_."
         Break
     }
     finally {
