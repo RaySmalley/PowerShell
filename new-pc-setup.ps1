@@ -96,7 +96,7 @@ if ($dcuVersion -lt $dcuLatest) {
     # Download
     Write-Host "Dell Command Update needs installed/updated."`n
     $output = $env:TEMP + "\DCU.zip"
-    $dcuURL = "https://dl.dell.com/FOLDER06986400M/1/Dell-Command-Update-Application_P5R35_WIN_4.1.0_A00.EXE"
+    $dcuURL = "https://dl.dell.com/FOLDER06986472M/1/Dell-Command-Update-Application-for-Windows-10_DF2DT_WIN_4.1.0_A00.EXE"
     $Error.Clear()
     
     Write-Host "Downloading Dell Command Update..."`n
