@@ -35,8 +35,8 @@ New-ItemProperty -Path HKLM:Software\Microsoft\Windows\CurrentVersion\policies\s
 # Set Time Zone
 Set-TimeZone -Name "Eastern Standard Time"
 
-# Remove 415Admin password if present
-if (Get-LocalUser 415Admin -ErrorAction SilentlyContinue) {Set-LocalUser -name "415Admin" -Password ([securestring]::new())}
+# Remove local admin password if present
+if (Get-LocalUser $env:USERNAME -ErrorAction SilentlyContinue) {Set-LocalUser -name "$env:USERNAME" -Password ([securestring]::new())}
 
 # Rename Computer
 if ($env:COMPUTERNAME -match "DESKTOP") {
@@ -263,7 +263,7 @@ if (-not (Get-LocalUser 415Admin -ErrorAction SilentlyContinue)) {
     Write-Host "415Admin local admin created."`n
 } else {
     Write-Host "Create a password for 415Admin user..."`n
-   net user 415Admin *
+    net user 415Admin *
     Write-Host "Password added."`n
 }
 
