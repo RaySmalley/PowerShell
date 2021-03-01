@@ -247,7 +247,7 @@ if (-not (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Unin
 }
 
 # End prompt
-Write-Host "Done! Don't forget to set default apps, clean up task bar, and install tools."`n
+Write-Host "Done! Don't forget to install N-able Agent and AV!"`n
 For ($i=1; $i -le 18; $i++) {(New-Object -ComObject WScript.Shell).SendKeys([char]174)}
 [console]::Beep();[console]::Beep()
 Start-Sleep 3
